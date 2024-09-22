@@ -1,12 +1,16 @@
 // define user model 
 
-import mongoose, { model } from "mongoose";
+import mongoose from "mongoose";
 
 // create schema
 const schema = new mongoose.Schema({
-    first_name : {type: String, required: true},
-    last_name : {type: String, required: true},
-    password : {type: String, required: true}
+    first_name : {type: String},
+    last_name : {type: String},
+    phoneNumber: { type: String, required: true },
+    otp: {
+        code : Number,
+        expire: String
+    }
 })
 
 // create user model

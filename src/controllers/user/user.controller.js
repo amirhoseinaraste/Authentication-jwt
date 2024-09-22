@@ -1,5 +1,6 @@
 // define user controller
 
+import createHttpError from "http-errors";
 import userModel from "../../models/user.models.js"
 
 // create user controller class
@@ -26,6 +27,17 @@ class userController {
 
     // delete user by id method 
     async deleteUserById(){}
+
+    // check user exist
+    async checkUserExist(arg){
+        // find user by usnig arg
+        const user = await userModel.find(arg);
+        
+        // check exist user
+        if (user) throw new Error(createHttpError.Forbidden('credential error'))
+        
+
+    }
 }
 
 // export user controller

@@ -7,7 +7,5 @@ express.response.custom = function(status, responseData){
         statusCode: status,
         data: responseData
     })
-    
-
 }
 export default express

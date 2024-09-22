@@ -7,11 +7,16 @@ import customResponse from './configs/custom-response.js';
 // import router
 import router from './routes/router.js';
 
-// import basic middleware for setup appl ication
+// import basic packages for setup appl ication
 import cors from 'cors';
 import helmet from 'helmet';
 import Logger from './configs/logger.js';
 import mongoose from 'mongoose';
+
+
+import createHttpError from 'http-errors';
+import statusCode from 'http-status-codes';
+
 
 
 // create class for configuration application
@@ -24,6 +29,7 @@ export default class Application{
         this.config();
         this.DB_Connect(DB_URI);
         this.AppRoutes();
+        this.ErrHandler()
         this.Listen(PORT);
     };
 
@@ -43,10 +49,10 @@ export default class Application{
         this.#app.use(helmet())
 
        // config logger
-       this.#app.use(Logger)
+        this.#app.use(Logger)
 
        // config custom resonse
-       customResponse()
+        customResponse()
         
     }
 
@@ -62,7 +68,39 @@ export default class Application{
     }
 
     // error handler 
-    ErrHandler(){}
+    ErrHandler(){
+        // not found error handler
+        this.#app.use((req, res, next)=>{
+            // get status
+            const notFoundStatus = statusCode.NOT_FOUND
+
+            // get not found error
+            const notFoundError = createHttpError.NotFound()
+
+            // send error
+            res.status(notFoundStatus).json({
+                statusCode: notFoundStatus,
+                notFoundError
+                
+            })
+        });
+
+        // Error Handler
+
+        this.#app.use((error, req, res, next)=>{
+            // get error 
+            const errorMsg = error.message || createHttpError.InternalServerError();
+
+            // get status error 
+            const errorStatus = error.status || statusCode.INTERNAL_SERVER_ERROR
+            
+            // send error
+            res.status(errorStatus).json({
+                status: errorStatus,
+                errorMsg
+            })
+        })
+    }
 
     // listen the port
     Listen(PORT){

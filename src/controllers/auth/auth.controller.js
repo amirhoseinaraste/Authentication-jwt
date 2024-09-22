@@ -1,28 +1,32 @@
-import userModel from "../../models/user.models.js"
+// import auth service
+import authService from "../../services/auth/auth.service.js"
+
+// import http status code
+import { StatusCodes } from "http-status-codes"
 
 // define auth controller
 class authController {
-    // sign up method
-    async signUp(req, res, next){
+
+    // get otp
+    async getOtp(req, res, next){
         try {
-            // get user data
-            const user = req.body
-            console.log(user);
+            // get phone number
+            const {phoneNumber} = req.body
+            
+            // get otp
+            const otp = await authService.getOtp(phoneNumber)
 
-            // create new use on db
-            await userModel.create(user)
+            // response otp
+            res.custom(StatusCodes.OK, otp)
 
-            // return respomse
-            res.custom(200, {message:
-                'welcome'
-            })
         } catch (error) {
-            next(error);
+            console.log(error);
+            next(error)
         }
     }
 
-    // sign in method
-    signIn(){
+    //  confirm otp 
+    confirmOtp(){
 
     }
 }

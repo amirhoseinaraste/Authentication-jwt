@@ -6,10 +6,10 @@ import authController from "../../controllers/auth/auth.controller.js";
 const router = Router()
 
 // define sign up route with post method
-router.post('/signup', authController.signUp)
+router.post('/get-otp', authController.getOtp)
 
 // define sign in router
-router.post('/signin', authController.signIn)
+router.post('/confirm-otp', authController.confirmOtp)
 
 export default router
 
