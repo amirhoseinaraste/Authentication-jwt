@@ -8,7 +8,6 @@ import userService from "../user/user.service.js";
 class authService{
     // signUp service
     async getOtp(phoneNumber){
-        console.log(phoneNumber);
         // validation phone number
         await phoneNumberSchema.validateAsync({phoneNumber})
 
