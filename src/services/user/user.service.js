@@ -29,13 +29,18 @@ class userService {
     async deleteUserById(){}
 
     // check user exist
-    async checkUserExist(phoneNumber){
+    async checkUserExist(phoneNumber , options = { returnUser: false , throwError}){
         // find user by usnig arg
         const user = await userModel.findOne({phoneNumber : phoneNumber});
+        // Check if user exists based on options
+        if(user){
+            if(options.throwError)  throw new Error(createHttpError.Forbidden('credential error'));
+            if(options.returnUser) return user;
+            } 
+            // Return null if user does not exist or options do not require a return
+            return user
+        }
         
-        // check exist user
-        if (user) throw new Error(createHttpError.Forbidden('credential error'))
-    }
 }
 
 // export user controller

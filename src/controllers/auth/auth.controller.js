@@ -2,7 +2,7 @@
 import authService from "../../services/auth/auth.service.js"
 
 // import http status code
-import { StatusCodes } from "http-status-codes"
+import { getStatusCode, StatusCodes } from "http-status-codes"
 
 // define auth controller
 class authController {
@@ -20,14 +20,26 @@ class authController {
             res.custom(StatusCodes.OK, otp)
 
         } catch (error) {
-            console.log(error);
             next(error)
         }
     }
 
     //  confirm otp 
-    confirmOtp(){
-
+    async confirmOtp(req, res, next){
+        try {
+            // take otp code
+            const {phoneNumber ,code} = req.body
+            
+            // confirm otp
+            const Token = await authService.confirmOtp(phoneNumber ,code)
+            // response
+            res.custom(StatusCodes.OK, {Token: Token})
+            
+        } catch (error) {
+            console.log(error);
+            
+            next(error)
+        }
     }
 }
 
