@@ -2,10 +2,11 @@
 import express from 'express';
 
 // create custom response method
-express.response.custom = function(status, responseData){
+express.response.custom = function(status, message, data = {}){
     return this.status(status).json({
         statusCode: status,
-        data: responseData
+        message: message,
+        data : data
     })
 }
 export default express

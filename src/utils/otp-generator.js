@@ -6,14 +6,14 @@ export default function otpGenerator(){
     const randomNumber = Math.floor(100000 + Math.random() * 900000)
 
     // expire time of otp
-    const expireTime = '1h';
+    const expireTime = 2 * 60 * 1000;
 
     // create otp
     const otp = {
         code: randomNumber,
         expire: expireTime
     }
-
+    
     // return otp
     return otp
 }

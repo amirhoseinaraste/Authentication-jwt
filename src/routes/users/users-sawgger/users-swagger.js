@@ -3,6 +3,8 @@
  *  /users/get-all-users:
  *      get:
  *          summary: Get all users that signed up
+ *          tags:
+ *           - Users
  *          description: Retrieves all users who signed up
  *          responses:
  *              200:
@@ -16,10 +18,14 @@
  *                                      type: integer
  *                                      description: State of response 
  *                                      example: 200
- *                                  data:
+ *                                  message: 
  *                                      type: string
+ *                                      description: list of all users
+ *                                      example: etc message
+ *                                  data:
+ *                                      type: object
  *                                      description: List of users
- *                                      example: {[{user}]}
+ *                                      example: {users}
  *                                  
  *          
  *              

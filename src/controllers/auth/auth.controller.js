@@ -2,7 +2,7 @@
 import authService from "../../services/auth/auth.service.js"
 
 // import http status code
-import { getStatusCode, StatusCodes } from "http-status-codes"
+import { StatusCodes } from "http-status-codes"
 
 // define auth controller
 class authController {
@@ -17,7 +17,7 @@ class authController {
             const otp = await authService.getOtp(phoneNumber)
 
             // response otp
-            res.custom(StatusCodes.OK, otp)
+            res.custom(StatusCodes.OK, 'otp sent', otp)
 
         } catch (error) {
             next(error)
@@ -31,10 +31,36 @@ class authController {
             const {phoneNumber ,code} = req.body
             
             // confirm otp
-            const Token = await authService.confirmOtp(phoneNumber ,code)
+            const Tokens = await authService.confirmOtp(phoneNumber ,code)
+
+            // set token on cookie
+            res.cookie('refreshToken', Tokens.refreshToken, {
+                httpOnly: true,
+                secure: true,
+                maxAge: 3600000,
+                sameSite: 'Strict'
+            })
+
             // response
-            res.custom(StatusCodes.OK, {Token: Token})
+            res.custom(StatusCodes.OK, 'Login successful' , Tokens)
             
+        } catch (error) {
+            next(error)
+        }
+    }
+    // refresh token
+    async getRefreshToken(req, res, next){
+        try {
+            // take token from header
+            const token = req.cookies.refreshToken
+
+
+            // get refresh token
+            const refreashToken = await authService.getRefreshToken(token)
+
+            // response
+            res.custom(StatusCodes.OK, "OK", refreashToken)
+
         } catch (error) {
             console.log(error);
             

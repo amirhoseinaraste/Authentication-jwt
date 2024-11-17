@@ -12,7 +12,7 @@ class userController {
         const users = await userModel.find({})
 
         // return list of users
-        res.custom(200, users)
+        res.custom(200, 'list of all users', users)
 
         } catch (error) {
             next(error)
@@ -29,14 +29,7 @@ class userController {
     async deleteUserById(){}
 
     // check user exist
-    async checkUserExist(arg){
-        // find user by usnig arg
-        const user = await userModel.find(arg);
-        
-        // check exist user
-        if (user) throw new Error(createHttpError.Forbidden('credential error'))
-        
-
+    async checkUserExist(){
     }
 }
 

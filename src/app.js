@@ -4,6 +4,12 @@ import express from 'express';
 // import custom response
 import customResponse from './configs/custom-response.js';
 
+// import secret key generator
+import secretKeyGenerator from './utils/secret-key-genearator.js';
+
+// import redis client
+import RedisConfig from './configs/redisClient.js';
+
 // import router
 import router from './routes/router.js';
 
@@ -12,6 +18,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import Logger from './configs/logger.js';
 import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
 
 // import swagger
 import swaggerJSDoc from 'swagger-jsdoc';
@@ -20,6 +27,7 @@ import swaggerUi, { serve } from 'swagger-ui-express'
 // import http error and http status
 import createHttpError from 'http-errors';
 import statusCode from 'http-status-codes';
+import getEnv from './configs/get-env.js';
 
 
 
@@ -32,9 +40,10 @@ export default class Application{
     constructor(PORT, DB_URI){
         this.config();
         this.DB_Connect(DB_URI);
+        this.initializeRedis();
         this.AppRoutes();
-        this.swaggerConfig()
-        this.ErrHandler()
+        this.swaggerConfig();
+        this.ErrHandler();
         this.Listen(PORT);
     };
 
@@ -58,6 +67,12 @@ export default class Application{
         
        // config custom resonse
         customResponse()
+    
+       // config cookie parser
+        this.#app.use(cookieParser())
+
+       // secret key generator
+       if(!getEnv('JWT_SECRET_DEV')) secretKeyGenerator()
         
     }
     //  config swagger 
@@ -86,6 +101,10 @@ export default class Application{
     DB_Connect(DB_URI){
         mongoose.connect(DB_URI).
         then(console.log('DB Connected...'))
+    }
+    // redis config
+    initializeRedis(){
+        this.redis = RedisConfig
     }
 
     // router connection

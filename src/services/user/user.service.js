@@ -34,11 +34,11 @@ class userService {
         const user = await userModel.findOne({phoneNumber : phoneNumber});
         // Check if user exists based on options
         if(user){
-            if(options.throwError)  throw new Error(createHttpError.Forbidden('credential error'));
+            if(options.throwError)  throw createHttpError.Forbidden('The provided data is invalid. Please check your input and try again.');
             if(options.returnUser) return user;
             } 
             // Return null if user does not exist or options do not require a return
-            return user
+            return null
         }
         
 }
