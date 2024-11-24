@@ -4,7 +4,13 @@
 import { Router } from "express";
 import authController from "../../controllers/auth/auth.controller.js";
 const router = Router()
- 
+
+// define register route
+router.post('/register', authController.register);
+
+// define login route
+router.post('/login', authController.login)
+
 // define sign up route with post method
 router.post('/get-otp', authController.getOtp)
 

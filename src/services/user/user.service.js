@@ -1,5 +1,4 @@
 // define user controller
-
 import createHttpError from "http-errors";
 import userModel from "../../models/user.models.js"
 
@@ -20,7 +19,14 @@ class userService {
     }
 
     // get user by id method
-    async getUserById(){}
+    async getUser(key){
+        // get user by key
+        const user = await userModel.findOne({key})
+        if(!user) throw createHttpError.NotFound('user does not exist')
+
+        // return user
+        return user
+    }
 
     // update user by id method 
     async updateUserById(){}
@@ -29,17 +35,21 @@ class userService {
     async deleteUserById(){}
 
     // check user exist
-    async checkUserExist(phoneNumber , options = { returnUser: false , throwError}){
-        // find user by usnig arg
-        const user = await userModel.findOne({phoneNumber : phoneNumber});
-        // Check if user exists based on options
-        if(user){
-            if(options.throwError)  throw createHttpError.Forbidden('The provided data is invalid. Please check your input and try again.');
-            if(options.returnUser) return user;
-            } 
-            // Return null if user does not exist or options do not require a return
-            return null
+    async checkUserExistByFileds(userField, reurnUser = false){
+        // validate input criteria
+        if (!userField || typeof userField !== "object" || Object.keys(userField).length === 0){
+            throw createHttpError.BadRequest("Invalid userField for user lookup.")
         }
+    
+        // Loop through each field and check if it exists in the database
+        for ( const  [key , value] of Object.entries(userField)){
+            // check exist user
+            const user = await userModel.findOne({[key] : value})
+            if(user) return key
+        }
+
+        return null
+    }
         
 }
 

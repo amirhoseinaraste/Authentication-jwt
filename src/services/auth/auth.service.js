@@ -1,24 +1,81 @@
 import userModel from "../../models/user.models.js";
 import { signAccessToken, signRefreshToken, verifyToken } from "../../utils/jwt.js";
 import otpGenerator from "../../utils/otp-generator.js";
-import phoneNumberSchema from "../../validation/auth.validation.js";
 import userService from "../user/user.service.js";
 import createHttpError from "http-errors";
 import RedisConfig from "../../configs/redisClient.js";
+import bcrypt from 'bcrypt';
 
 // define auth servise
-// create auth service class
 class authService{
-    // signUp service
-    async getOtp(phoneNumber){
-        // validation phone number
-        await phoneNumberSchema.validateAsync({phoneNumber})
+    async register(body){
+        // take fields from user
+        const {username, password, email, phoneNumber, first_name, last_name} = body;
 
+        // check user exist by important fileds like username, email, phoneNumber
+        const key = await userService.checkUserExistByFileds({username, email, phoneNumber}, true)
+        if(key){
+            throw createHttpError.Conflict(`${key} is already in use.`)
+        }
+
+        // hash password
+        const salt = 10
+        const hash = await bcrypt.hash(password, salt);
+
+        // create new user
+        const user = await userModel.create({
+            username,
+            password: hash,
+            email,
+            phoneNumber,
+            first_name,
+            last_name
+        })
+
+        // change password value for response
+        user.password = undefined
+        
+        // take tokns
+        const accessToken = signAccessToken({userId: user._id});
+        const refreashToken = signRefreshToken({userId: user._id});
+
+        // return user and token
+        return {user, accessToken, refreashToken}
+    }
+    
+    async login(emai, username, password){
+        // check exist user
+        const user = await userService.getUser(username)
+        if(!user) throw createHttpError.NotFound('user does not exist');
+        console.log(user);
+        
+        // check password
+        console.log(password);
+        console.log(user.password);
+        
+        const isMatch = await bcrypt.compare(password, user.password);
+        console.log(isMatch);
+        
+        if(!isMatch) throw createHttpError.Unauthorized('Invalid email or password');
+        ی
+        // get tokens
+        const accessToken = signAccessToken({userId : user._id})
+        const refreashToken = signRefreshToken({userId : user._id})
+
+        // change password value for response
+        user.password = undefined
+
+        // return response
+        return {accessToken, refreashToken, user}
+    }
+    
+    async getOtp(phoneNumber){
         // get otp
         const otp = otpGenerator()
 
         // check exist user
-        const user = await userService.checkUserExist(phoneNumber, {returnUser: true})
+        const user = await userService.getUser({phoneNumber})
+
         // if user exist update otp code otherwise create new user
         if(user){
             // update otp code
@@ -32,17 +89,11 @@ class authService{
         return otp.code
 
     }
-
       
     async confirmOtp(phoneNumber ,code){
         // check exist user
-        const user = await userService.checkUserExist(phoneNumber, {returnUser: true});
+        const user = await userService.getUser({phoneNumber});
         
-        // if user does not exist throw error
-        if(!user){
-            throw createHttpError.NotFound('The provided data is invalid. Please check your input and try again.')
-        } 
-
         // check confirmation otp
         const now = new Date().getDate();
         if(code !=  user.otp?.code || user.otp.expire < now){
@@ -64,9 +115,9 @@ class authService{
 
 
     }
+    
     async getRefreshToken(token){
         // check exist token 
-        if(!token) throw createHttpError.Unauthorized('Unauthorized access. Please log in to continue');
 
         // verify token and take user
         const user = verifyToken(token);
@@ -85,7 +136,7 @@ class authService{
         const newRefreshToken = signRefreshToken({userId: user.userId});
 
         // save new refresh token on redis
-        const  tokenExpiration = 7 * 24 * 60 * 60 * 1000
+        const tokenExpiration = 7 * 24 * 60 * 60 * 1000
         await RedisConfig.set(`refresh_Token_${user._id}`, newRefreshToken, 'EX', tokenExpiration);
 
         // return tokens

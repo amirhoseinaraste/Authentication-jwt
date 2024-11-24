@@ -156,3 +156,207 @@
  *      security:
  *       - CookieAuth: []               
  */
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Register user
+ *     description: This endpoint allows a user to register by providing required information.
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - password
+ *               - email
+ *               - phoneNumber
+ *               - first_name
+ *               - last_name
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: username123
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: Asdf1234
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: exam@gmail.com
+ *               phoneNumber:
+ *                 type: string
+ *                 example: "09121234567"
+ *               first_name:
+ *                 type: string
+ *                 example: John
+ *               last_name:
+ *                 type: string
+ *                 example: Doe
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - password
+ *               - email
+ *               - phoneNumber
+ *               - first_name
+ *               - last_name
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: username123
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: Asdf1234
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: exam@gmail.com
+ *               phoneNumber:
+ *                 type: string
+ *                 example: "09121234567"
+ *               first_name:
+ *                 type: string
+ *                 example: name
+ *               last_name:
+ *                 type: string
+ *                 example: lastname
+ *     responses:
+ *       201:
+ *         description: User successfully registered
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 201
+ *                 message:
+ *                   type: string
+ *                   example: Registration successful
+ *                 data:
+ *                   type: object
+ *                   example: {}
+ *       400:
+ *         description: Bad Request - Validation Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Email is already in use
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Something went wrong
+ */
+/**
+ * @swagger
+ *  /auth/login:
+ *      post:
+ *          summary: Login user
+ *          description: Authenticate a user with email/username and password
+ *          tags:
+ *              - Authentication
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                          type: object
+ *                          required:
+ *                              - password
+ *                          properties:
+ *                              email:
+ *                                  type: string
+ *                                  example: example@gmail.com
+ *                              username:
+ *                                  type: string
+ *                                  example: username123
+ *                              password:
+ *                                  type: string
+ *                                  example: password@123 
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          required:
+ *                              - password
+ *                          properties:
+ *                              email:
+ *                                  type: string
+ *                                  example: example@gmail.com
+ *                              username:
+ *                                  type: string
+ *                                  example: username123
+ *                              password:
+ *                                  type: string
+ *                                  example: password@123
+ *          responses:
+ *              200:
+ *                  description: User successfully logged in
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  statusCode:
+ *                                      type: integer
+ *                                      example: 200
+ *                                  message:
+ *                                      type: string
+ *                                      example: Login successful
+ *                                  data:
+ *                                      type:  object 
+ *                                      properties:
+ *                                          accesstToken:
+ *                                              type: string
+ *                                              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *                                          refreshToken: 
+ *                                              type: string
+ *                                              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *              400:
+ *                  description: Invalid input data
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  statusCode:
+ *                                      type: integer
+ *                                      example: 400
+ *                                  error:
+ *                                      type:  string 
+ *                                      example: Invalid username or password
+ *              401:
+ *                  description: Unathorized
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  statusCode:
+ *                                      type: integer
+ *                                      example: 401
+ *                                  error:
+ *                                      type:  string 
+ *                                      example: Unauthorized Invalid credentials
+ *              500:
+ *                  description: Intenal Server Error    
+ */
