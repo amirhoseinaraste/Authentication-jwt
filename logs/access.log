@@ -1,8 +1,0 @@
-GET / : 200 : 7ms
-GET /favicon.ico : 404 : 3ms
-GET / : 304 : 1ms
-GET / : 304 : 2ms
-GET / : 304 : 1ms
-GET / : 304 : 1ms
-GET / : 304 : 1ms
-GET / : 304 : 1ms
